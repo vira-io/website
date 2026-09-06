@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Dokumentacja - vira.io</title>
+<link rel="icon" href="../images/logo.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../styles/main.css" />
+</head>
+<body>
+
+<canvas id="bg-canvas"></canvas>
+
+<nav class="site-nav">
+  <div class="wrap">
+    <a class="brand" href="../index.html">
+      <img src="../images/logo.png" alt="" />
+      vira.io
+    </a>
+    <div class="nav-links">
+      <a href="browse.html">Przegladaj</a>
+      <a href="docs.html" class="active">Dokumentacja</a>
+      <a href="about.html">O projekcie</a>
+      <a class="nav-cta" href="docs.html#publikowanie">Opublikuj biblioteke</a>
+    </div>
+    <button class="nav-toggle" aria-label="Menu">&#9776;</button>
+  </div>
+</nav>
+
+<header class="page-header">
+  <div class="wrap">
+    <h1>Dokumentacja</h1>
+    <p>Wszystko, czego potrzebujesz, zeby zainstalowac, uzyc i opublikowac biblioteke w Vira.</p>
+  </div>
+</header>
+
+<div class="wrap docs-layout">
+  <nav class="docs-nav">
+    <a href="#poczatek" class="active">Pierwsze kroki</a>
+    <a href="#instalacja">Instalacja biblioteki</a>
+    <a href="#uzycie">Uzycie w kodzie</a>
+    <a href="#typy">Typy bibliotek</a>
+    <a href="#lokalne">Instalacja --local</a>
+    <a href="#publikowanie">Publikowanie</a>
+    <a href="#schema">Schemat repo-list.json</a>
+  </nav>
+
+  <div class="docs-content">
+
+    <section id="poczatek">
+      <h2>Pierwsze kroki</h2>
+      <p>
+        Vira to rejestr bibliotek dla <a href="https://github.com/HackerOS-Linux-System/HackerScript">HackerScript</a>,
+        obslugiwany przez menedzer pakietow <code>virus</code>. Zamiast wlasnego serwera,
+        Vira czyta liste bibliotek wprost z pliku
+        <code>repo-list.json</code> w repozytorium
+        <a href="https://github.com/vira-io/repository">vira-io/repository</a> na GitHubie -
+        kazda biblioteka to zwykle repozytorium git albo gotowy plik binarny opublikowany
+        jako GitHub Release.
+      </p>
+      <p>Nic nie trzeba instalowac poza samym <code>virus</code> (patrz dokumentacja HackerScript).</p>
+    </section>
+
+    <section id="instalacja">
+      <h2>Instalacja biblioteki</h2>
+      <p>Kazda komenda ma ten sam ksztalt:</p>
+      <pre class="code-block"><span class="c"># pobiera bibliotekę do cache/libs/vira/&lt;nazwa&gt;/ biezacego projektu</span>
+<span class="f">virus install vira</span> pretty-error
+
+<span class="c"># z jawna wersja (tag wydania / branch, dla static-lib/shared-lib/rust-lib/git)</span>
+<span class="f">virus install vira</span> hk-parser --version 1.2.0</pre>
+      <p>
+        Dla typu <code>static-lib</code>/<code>shared-lib</code>/<code>rust-lib</code> - jesli
+        nie podasz <code>--version</code>, Vira sama znajdzie najnowsze wydanie z GitHub Releases
+        repozytorium wskazanego w polu <code>lib</code>.
+      </p>
+    </section>
+
+    <section id="uzycie">
+      <h2>Uzycie w kodzie</h2>
+      <p>Sposob uzycia zalezy od typu biblioteki:</p>
+
+      <h3>git (kod zrodlowy .hcs)</h3>
+      <pre class="code-block"><span class="k">get</span> &lt;vira:pretty-error&gt; <span class="k">import</span> &lt;pretty_error::print_pretty_error&gt;
+
+<span class="k">fun</span> main() [
+    <span class="k">match</span> wczytaj_config() [
+        Ok(cfg) -> [ log(<span class="s">"config wczytany"</span>) ]
+        Err(e) -> [
+            print_pretty_error(pretty_error(<span class="s">"nie mozna wczytac configu"</span>, e))
+        ]
+    ]
+]</pre>
+      <p>Biblioteka MUSI miec <code>mod.hcs</code> w korzeniu repo, zeby byla importowalna bez <code>::</code>.</p>
+
+      <h3>static-lib / shared-lib</h3>
+      <p>Linkowanie jest automatyczne przy <code>virus build</code> - w kodzie uzywasz <code>extern</code>:</p>
+      <pre class="code-block"><span class="k">extern</span> <span class="s">"hk_parser"</span> <span class="k">fun</span> hk_parse_raw(wejscie: Str) -> Int</pre>
+
+      <h3>rust-lib</h3>
+      <p>Podpinane przez wygenerowany <code>.cargo/config.toml</code> - rowniez bez recznej konfiguracji Cargo.</p>
+    </section>
+
+    <section id="typy">
+      <h2>Typy bibliotek</h2>
+      <table class="schema-table">
+        <thead>
+          <tr><th>type</th><th>Co to jest</th><th>Jak uzyc w kodzie</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>git</td><td>Repozytorium ze zrodlem .hcs</td><td><code>get &lt;vira:nazwa&gt;</code></td></tr>
+          <tr><td>static-lib</td><td>Gotowy plik .a</td><td><code>extern "nazwa" fun ...</code></td></tr>
+          <tr><td>shared-lib</td><td>Gotowy plik .so</td><td><code>extern "nazwa" fun ...</code></td></tr>
+          <tr><td>rust-lib</td><td>Natywna biblioteka .rlib</td><td><code>extern "nazwa" fun ...</code></td></tr>
+          <tr><td>hlib</td><td>Format HackerOS (.hlib)</td><td>Zaplanowane na przyszlosc - jeszcze nie zaimplementowane</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="lokalne">
+      <h2>Instalacja --local</h2>
+      <p>
+        Domyslnie biblioteka trafia do <code>cache/</code> biezacego projektu. Flaga
+        <code>--local</code> instaluje ja zamiast tego do
+        <code>$HOME/.hackerscript/cache/</code> - wspolnego miejsca dla
+        WSZYSTKICH Twoich projektow na tej maszynie:
+      </p>
+      <pre class="code-block"><span class="f">virus install vira</span> pretty-error --local</pre>
+      <p>
+        <code>hackerc</code> automatycznie sprawdza to miejsce, jesli biblioteki nie ma
+        lokalnie w projekcie - nie musisz instalowac jej ponownie w kazdym repo.
+      </p>
+    </section>
+
+    <section id="publikowanie">
+      <h2>Publikowanie wlasnej biblioteki</h2>
+      <ol>
+        <li>Utworz repozytorium na GitHubie (np. <code>github.com/twoj-user/nazwa-biblioteki</code>).</li>
+        <li>
+          Dla bibliotek <code>git</code>: wrzuc <code>mod.hcs</code> (musi zawierac
+          publiczne funkcje/struktury) + <code>Virus.hk</code> (metadane) + <code>README</code> +
+          licencje - plasko, w korzeniu repo.
+        </li>
+        <li>
+          Dla <code>static-lib</code>/<code>shared-lib</code>/<code>rust-lib</code>: opublikuj
+          skompilowany plik jako GitHub Release, z URL-em zawierajacym <code>{version}</code>
+          w miejscu numeru wersji.
+        </li>
+        <li>
+          Zrob fork <a href="https://github.com/vira-io/repository">vira-io/repository</a>,
+          dodaj swoj wpis do tablicy <code>libraries</code> w <code>repo-list.json</code>
+          (patrz schemat ponizej) i otworz pull request.
+        </li>
+        <li>Po zmergowaniu Twoja biblioteka jest natychmiast instalowalna przez <code>virus install vira</code>.</li>
+      </ol>
+    </section>
+
+    <section id="schema">
+      <h2>Schemat repo-list.json</h2>
+      <pre class="code-block">{
+  <span class="s">"libraries"</span>: [
+    {
+      <span class="s">"name"</span>: <span class="s">"pretty-error"</span>,
+      <span class="s">"description"</span>: <span class="s">"Ladne, kolorowe wyswietlanie bledow HackerScript."</span>,
+      <span class="s">"type"</span>: <span class="s">"git"</span>,
+      <span class="s">"lib"</span>: <span class="s">""</span>
+    },
+    {
+      <span class="s">"name"</span>: <span class="s">"hk-parser"</span>,
+      <span class="s">"description"</span>: <span class="s">"Parser formatu .hk."</span>,
+      <span class="s">"type"</span>: <span class="s">"static-lib"</span>,
+      <span class="s">"lib"</span>: <span class="s">"https://github.com/.../releases/download/{version}/libhk_parser.a"</span>
+    }
+  ]
+}</pre>
+      <table class="schema-table">
+        <thead><tr><th>pole</th><th>opis</th></tr></thead>
+        <tbody>
+          <tr><td>name</td><td>Nazwa uzywana w <code>virus install vira &lt;name&gt;</code> i <code>get &lt;vira:name&gt;</code>.</td></tr>
+          <tr><td>description</td><td>Krotki opis pokazywany na tej stronie.</td></tr>
+          <tr><td>type</td><td>Jeden z: <code>git</code>, <code>static-lib</code>, <code>shared-lib</code>, <code>rust-lib</code>, <code>hlib</code>.</td></tr>
+          <tr><td>lib</td><td>Dla <code>git</code>: puste = <code>github.com/vira-io/&lt;name&gt;</code>, albo jawny URL. Dla reszty: URL wydania z <code>{version}</code>.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-bottom">
+      <span>&copy; 2026 Vira - czesc ekosystemu HackerScript / HackerOS</span>
+      <a href="https://github.com/vira-io/repository">Rejestr na GitHub</a>
+    </div>
+  </div>
+</footer>
+
+<script src="../js/main.js"></script>
+</body>
+</html>
