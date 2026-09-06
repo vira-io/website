@@ -1,1 +1,94 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>O projekcie - vira.io</title>
+<link rel="icon" href="../images/logo.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../styles/main.css" />
+</head>
+<body>
 
+<canvas id="bg-canvas"></canvas>
+
+<nav class="site-nav">
+  <div class="wrap">
+    <a class="brand" href="../index.html">
+      <img src="../images/logo.png" alt="" />
+      vira.io
+    </a>
+    <div class="nav-links">
+      <a href="browse.html">Przegladaj</a>
+      <a href="docs.html">Dokumentacja</a>
+      <a href="about.html" class="active">O projekcie</a>
+      <a class="nav-cta" href="docs.html#publikowanie">Opublikuj biblioteke</a>
+    </div>
+    <button class="nav-toggle" aria-label="Menu">&#9776;</button>
+  </div>
+</nav>
+
+<header class="page-header">
+  <div class="wrap">
+    <h1>Rejestr, nie platforma</h1>
+    <p class="lede" style="max-width:60ch; font-size:1.05rem;">
+      Vira istnieje, zeby importowanie kodu w HackerScript bylo tak proste,
+      jak <code>get &lt;vira:nazwa&gt;</code> - bez wlasnego serwera,
+      bez konta, bez posrednikow miedzy Toba a repozytorium na GitHubie.
+    </p>
+  </div>
+</header>
+
+<section class="section" style="border-top:none;">
+  <div class="wrap">
+    <div class="about-values">
+      <div class="value-card">
+        <h3>Zero infrastruktury</h3>
+        <p>Rejestr to jeden plik JSON w repozytorium git. Publikacja to pull request, nie upload na serwer, ktorym ktos musi zarzadzac.</p>
+      </div>
+      <div class="value-card">
+        <h3>Cztery typy, jeden mechanizm</h3>
+        <p>Zrodlo .hcs, static-lib, shared-lib, rust-lib - <code>virus</code> wie, jak kazdy pobrac i podlaczyc, bez recznej konfiguracji Cargo.</p>
+      </div>
+      <div class="value-card">
+        <h3>Lokalny cache, wspolny cache</h3>
+        <p><code>--local</code> instaluje raz do <code>$HOME</code> - <code>hackerc</code> znajduje bibliotek we wszystkich Twoich projektach.</p>
+      </div>
+      <div class="value-card">
+        <h3>Uczciwy status</h3>
+        <p>Typ <code>hlib</code> (HackerOS) jest jawnie oznaczony jako "wkrotce" - Vira nie udaje, ze cos dziala, zanim naprawde dziala.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap" style="max-width: 720px;">
+    <h2>Czesc ekosystemu HackerScript</h2>
+    <p style="margin-top:16px;">
+      HackerScript kompiluje sie do prawdziwego Rusta i biegle rozmawia z innymi
+      ekosystemami - <code>direct[...]</code> dla Pythona,
+      <code>get &lt;crates:...&gt;</code> dla Cargo. Vira dodaje do tego wlasny,
+      natywny ekosystem bibliotek HackerScript - pisanych w tym samym jezyku,
+      publikowanych przez ta sama spolecznosc.
+    </p>
+    <p style="margin-top:14px;">
+      Projekt jest mlody - rejestr rosnie wraz z kazda opublikowana biblioteka.
+      Jesli napisales cos uzytecznego, <a href="docs.html#publikowanie" class="gradient-text" style="font-weight:600;">dodaj to</a>.
+    </p>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-bottom">
+      <span>&copy; 2026 Vira - czesc ekosystemu HackerScript / HackerOS</span>
+      <a href="https://github.com/HackerOS-Linux-System/HackerScript">HackerScript na GitHub</a>
+    </div>
+  </div>
+</footer>
+
+<script src="../js/main.js"></script>
+</body>
+</html>
